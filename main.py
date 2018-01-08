@@ -37,19 +37,19 @@ def create_mst_tag_list(dict_data):
     return list(set(sum(mst_tag_list,[])))
 
 
-def add_tag_from_link(item, mst_tags):
+def add_tag_from_link(item ):
     text = fetch_link_page_text(item['url'])
     print("--------------> fetch link page text(title, h1, h2, h3)")
     print(text)
     word_list = get_tag_word_list(text)
-    item['tags'] = get_tag_words(word_list, mst_tags)
+    item['tags'] = get_tag_words(word_list)
     return item
 
 
-def get_tag_words(word_list, mst_tags):
+def get_tag_words(word_list):
     tag_words = []
     for i in word_list:
-        if(i in mst_tags):
+        if(i.isalnum()):
             if((i in tag_words) is False):
                 tag_words.append(i)
 
@@ -119,21 +119,18 @@ def get_tag_word_list(text):
         if part_of_speech == u'名詞':
             tag_list.append(token.surface)
 
-    # debug
-    print(tag_list)
     return tag_list
 
 
 def main():
     d = read_json_data()
-    mst_tags = create_mst_tag_list(d)
+
+    # not use
+    # mst_tags = create_mst_tag_list(d)
     target_items = fetch_empty_tag_list(d)
 
-    # debug
-    print(mst_tags)
-
     for item in target_items:
-        res = add_tag_from_link(item, mst_tags)
+        res = add_tag_from_link(item)
         print("title : ", res['title'])
         print("Add tags --------> ", res['tags'])
         d.update(res)
