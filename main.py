@@ -39,6 +39,7 @@ def create_mst_tag_list(dict_data):
 
 def add_tag_from_link(item, mst_tags):
     text = fetch_link_page_text(item['url'])
+    print("--------------> fetch link page text(title, h1, h2, h3)")
     print(text)
     word_list = get_tag_word_list(text)
     item['tags'] = get_tag_words(word_list, mst_tags)
@@ -71,12 +72,17 @@ def fetch_link_page_text(url):
     text_list = []
 
     r = requests.get(url, timeout=5)
+    r.encoding = r.apparent_encoding
     if(r.status_code == 200):
         if('html' in r.headers['Content-Type']):
-            if(r.encoding == 'ISO-8859-1'):
-                r.encoding = 'Shift_jis'
-
-            soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
+            print(r.encoding)
+            if(r.encoding == 'Windows-1254'):
+                r.encoding = 'utf-8'
+                soup = BeautifulSoup(r.text, 'lxml')
+            elif(r.encoding == 'EUC-JP'):
+                soup = BeautifulSoup(r.text.encode('EUC-JP'), 'lxml')
+            else:
+                soup = BeautifulSoup(r.text, 'lxml')
 
             # delete script tag
             for script in soup.find_all('script', src=False):
