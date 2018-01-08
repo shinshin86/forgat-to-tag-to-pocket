@@ -71,40 +71,45 @@ def fetch_link_page_text(url):
     print("Fetch url : " + url)
     text_list = []
 
-    r = requests.get(url, timeout=5)
-    r.encoding = r.apparent_encoding
-    if(r.status_code == 200):
-        if('html' in r.headers['Content-Type']):
-            print(r.encoding)
-            if(r.encoding == 'Windows-1254'):
-                r.encoding = 'utf-8'
-                soup = BeautifulSoup(r.text, 'lxml')
-            elif(r.encoding == 'EUC-JP'):
-                soup = BeautifulSoup(r.text.encode('EUC-JP'), 'lxml')
-            else:
-                soup = BeautifulSoup(r.text, 'lxml')
+    try:
+        r = requests.get(url, timeout=5)
+        r.encoding = r.apparent_encoding
+        if(r.status_code == 200):
+            if('html' in r.headers['Content-Type']):
+                print(r.encoding)
+                if(r.encoding == 'Windows-1254'):
+                    r.encoding = 'utf-8'
+                    soup = BeautifulSoup(r.text, 'lxml')
+                elif(r.encoding == 'EUC-JP'):
+                    soup = BeautifulSoup(r.text.encode('EUC-JP'), 'lxml')
+                else:
+                    soup = BeautifulSoup(r.text, 'lxml')
 
-            # delete script tag
-            for script in soup.find_all('script', src=False):
-                script.decompose()
+                # delete script tag
+                for script in soup.find_all('script', src=False):
+                    script.decompose()
 
-            # fetch text from tag of title, h1, h2, h3
-            text_list.append(soup.title.string.rstrip("\n"))
+                # fetch text from tag of title, h1, h2, h3
+                text_list.append(soup.title.string.rstrip("\n"))
 
-            for text in soup.find_all('h1'):
-                if(text.string is not None):
-                    text_list.append(text.string.rstrip("\n"))
-            for text in soup.find_all('h2'):
-                if(text.string is not None):
-                    text_list.append(text.string.rstrip("\n"))
-            for text in soup.find_all('h3'):
-                if(text.string is not None):
-                    text_list.append(text.string.rstrip("\n"))
-            text_list2 = [t for t in text_list if t]
+                for text in soup.find_all('h1'):
+                    if(text.string is not None):
+                        text_list.append(text.string.rstrip("\n"))
+                for text in soup.find_all('h2'):
+                    if(text.string is not None):
+                        text_list.append(text.string.rstrip("\n"))
+                for text in soup.find_all('h3'):
+                    if(text.string is not None):
+                        text_list.append(text.string.rstrip("\n"))
+                text_list2 = [t for t in text_list if t]
 
-            res = ','.join(text_list2)
-            return text_replace(res)
-    else:
+                res = ','.join(text_list2)
+                return text_replace(res)
+        else:
+            return ""
+    except requests.exceptions.Timeout as e:
+        print("---------> Connection timeout error...")
+        print(e)
         return ""
 
 
