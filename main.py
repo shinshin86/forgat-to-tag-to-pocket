@@ -89,14 +89,17 @@ def fetch_link_page_text(url):
                 script.decompose()
 
             # fetch text from tag of title, h1, h2, h3
-            text_list.append(soup.title.string)
+            text_list.append(soup.title.string.rstrip("\n"))
 
             for text in soup.find_all('h1'):
-                text_list.append(text.string)
+                if(text.string is not None):
+                    text_list.append(text.string.rstrip("\n"))
             for text in soup.find_all('h2'):
-                text_list.append(text.string)
+                if(text.string is not None):
+                    text_list.append(text.string.rstrip("\n"))
             for text in soup.find_all('h3'):
-                text_list.append(text.string)
+                if(text.string is not None):
+                    text_list.append(text.string.rstrip("\n"))
             text_list2 = [t for t in text_list if t]
 
             res = ','.join(text_list2)
