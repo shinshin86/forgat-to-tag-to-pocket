@@ -15,7 +15,7 @@ IN_JSON_FILE = 'pocket_data.json'
 OUT_JSON_FILE = 'add_tag_pocket_data.json'
 
 # Set limit character count
-LIMIT_CHAR_COUNT = 100
+LIMIT_CHAR_COUNT = 50
 
 
 def read_json_data():
@@ -103,9 +103,17 @@ def fetch_link_page_text(url):
             text_list2 = [t for t in text_list if t]
 
             res = ','.join(text_list2)
-            return res.replace(' ', '')
+            return text_replace(res)
     else:
         return ""
+
+
+def text_replace(t):
+    t = t.replace('\n', '')
+    t = t.replace('【', '')
+    t = t.replace('】', '')
+    t = t.replace(' ', '')
+    return t
 
 
 def get_tag_word_list(text):
@@ -114,8 +122,6 @@ def get_tag_word_list(text):
 
     t = Tokenizer()
     tag_list = []
-
-    # text = text.encode("raw_unicode_escape").decode("utf-8")
 
     for token in t.tokenize(text[0:LIMIT_CHAR_COUNT:]):
         part_of_speech = token.part_of_speech.split(',')[0]
