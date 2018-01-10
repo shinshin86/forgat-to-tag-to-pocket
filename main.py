@@ -2,7 +2,6 @@
 from bs4 import BeautifulSoup
 from janome.tokenizer import Tokenizer
 import requests
-import collections as cl
 import json
 
 
