@@ -1,3 +1,8 @@
 *.un~
 *.pyc
 __pychache__/
+
+# project json and pocket file
+add_tag_pocket_data.json
+pocket_data.json
+ril_export.html
